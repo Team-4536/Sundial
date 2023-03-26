@@ -6,7 +6,8 @@ def createWindow(widgetInits):
 
     dpg.create_context()
     dpg.create_viewport(title='Sundial', width=600, height=300)
-
+    dpg.enable_docking(dock_space=True)
+    # dpg.configure_app(docking=True, docking_space=dock_space) 
     for x in widgetInits:
         x()
 

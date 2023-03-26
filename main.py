@@ -1,18 +1,27 @@
 
+import dearpygui.dearpygui as dpg
 import ui
 import widgets.driveInfo
+import widgets.drawTest
+import widgets.client
 
 
 
+if __name__ == "__main__":
 
-widgets = [
-    widgets.driveInfo.create,
-    ]
+    w = [
+        widgets.driveInfo.create,
+        widgets.drawTest.create,
+        widgets.client.create,
+        ]
 
-ui.createWindow(widgets);
+    ui.createWindow(w)
 
 
-def loop():
-    pass
+    def loop():
+        widgets.driveInfo.tick()
+        widgets.drawTest.tick()
+        widgets.client.tick()
 
-ui.startWindow(loop);
+
+    ui.startWindow(loop)
