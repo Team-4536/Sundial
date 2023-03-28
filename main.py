@@ -1,7 +1,6 @@
 
 import dearpygui.dearpygui as dpg
 import ui
-import widgets.driveInfo
 import widgets.drawTest
 import widgets.client
 
@@ -10,7 +9,6 @@ import widgets.client
 if __name__ == "__main__":
 
     w = [
-        widgets.driveInfo.create,
         widgets.drawTest.create,
         widgets.client.create,
         ]
@@ -18,10 +16,20 @@ if __name__ == "__main__":
     ui.createWindow(w)
 
 
+
+
+
+    with dpg.font_registry():
+        default_font = dpg.add_font("consolab.ttf", 13)
+    dpg.bind_font(default_font)
+
+
+
+
     def loop():
-        widgets.driveInfo.tick()
         widgets.drawTest.tick()
         widgets.client.tick()
 
 
+    dpg.show_style_editor()
     ui.startWindow(loop)

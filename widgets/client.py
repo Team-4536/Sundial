@@ -4,9 +4,12 @@ import ntcore
 from os.path import basename
 import dearpygui.dearpygui as dpg
 
-
-
-valDict = { }
+trackedDoubles = [
+    "FL Pwr",
+    "FR Pwr",
+    "BL Pwr",
+    "BR Pwr"
+ ]
 
 
 inst = ntcore.NetworkTableInstance.getDefault()
@@ -23,17 +26,23 @@ robotInfo = inst.getTable("RobotInfo")
 def create():
 
     with dpg.value_registry():
-        dpg.add_double_value(label="fl_pwr", tag="fl_pwr", default_value=0)
+        for x in trackedDoubles:
+            dpg.add_double_value(label=x, tag=x, default_value=0)
 
 
-    with dpg.window(label="Client window"):
+    with dpg.window(label="Client window", tag="Client window"):
         #dpg.add_button(label="Print pwr val", callback=getVal)
-        dpg.add_drag_double(source="fl_pwr", label="FL Power: ")
-
+        dpg.add_drag_int(label="label is here")
+        for x in trackedDoubles:
+            dpg.add_slider_double(source=x, label=f"{x}: ", min_value=-1, max_value=1)
 
 
 
 def tick():
-    x = robotInfo.getNumber("FL Pwr", None)
-    if x is not None:
-        dpg.set_value("fl_pwr", x)
+
+
+    for x in trackedDoubles:
+
+        v = robotInfo.getNumber(x, None)
+        if v is not None:
+            dpg.set_value(x, v)

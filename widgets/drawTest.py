@@ -1,17 +1,107 @@
 import dearpygui.dearpygui as dpg
+import math
 
 
+
+
+
+wheelWidth = 60
+wheelHeight = 60
+backColor = [0, 0, 0]
+wheelColor = [255, 255, 255]
+scWidth = 500
+scHeight = 300
+treadSpacing = 25
+maxWheelSpeed = 3 # pixels per frame
+
+treadPositions = [
+    0, 0, 0, 0
+]
+
+driveWindowTag = "driveWindow"
 
 def create():
 
-    with dpg.window(label="Drawing test!"):
 
-        with dpg.drawlist(width=400, height=400):  # or you could use dpg.add_drawlist and set parents manually
 
-            dpg.draw_line((10, 10), (100, 100), color=(255, 0, 0, 255), thickness=1)
-            dpg.draw_text((0, 0), "Origin", color=(250, 250, 250, 255), size=15)
-            dpg.draw_arrow((50, 70), (100, 65), color=(0, 200, 255), thickness=1, size=10)
+
+
+    with dpg.window(label="Drive", width=scWidth, height=scHeight, tag=driveWindowTag, no_scrollbar=True) as window:
+
+
+
+        with dpg.theme() as item_theme:
+            with dpg.theme_component(dpg.mvAll):
+                dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (200, 200, 100), category=dpg.mvThemeCat_Core)
+                dpg.add_theme_style(dpg.mvStyleVar_WindowPadding, 0, 0, category=dpg.mvThemeCat_Core)
+
+            dpg.bind_item_theme(window, item_theme)
+
+
+
+        with dpg.drawlist(width=scWidth, height=scHeight, tag="driveDraw"):
+
+            with dpg.draw_node(tag="backgroundNode"):
+                dpg.draw_rectangle([-1, -1], [1, 1], color=backColor, fill=backColor)
+
+            with dpg.draw_layer(label="wheel_layer"):
+                with dpg.draw_node(tag="root node"):
+
+                    for x in range(0, 4):
+                        with dpg.draw_node(tag=("wheelNode" + str(x))):
+                            dpg.draw_rectangle([-wheelWidth/2, wheelHeight/2], [wheelWidth/2, -wheelHeight/2], color=wheelColor)
+
+                            with dpg.draw_node(tag=("treadNode" + str(x))):
+                                for y in range(0, 5):
+
+                                    flipped = [False, True, True, False][x]
+                                    if not flipped:
+                                        startY = (-wheelHeight/2) - wheelWidth # bc its a 45 deg angle, width == the dist up
+                                        dpg.draw_line([-wheelWidth/2, startY+y*treadSpacing], [wheelWidth/2, startY+y*treadSpacing+wheelWidth], color=wheelColor)
+                                    else:
+                                        startY = (-wheelHeight/2)
+                                        dpg.draw_line([-wheelWidth/2, startY+y*treadSpacing], [wheelWidth/2, startY+y*treadSpacing-wheelWidth], color=wheelColor)
+
+
+                            with dpg.draw_node(tag=("maskNode" + str(x))):
+                                # upper mask
+                                dpg.draw_rectangle([-wheelWidth/2-1, (-wheelHeight/2)-2], [wheelWidth/2+1, (-wheelHeight/2)-wheelWidth-1], fill=backColor, color=backColor)
+                                # lower
+                                dpg.draw_rectangle([-wheelWidth/2-1, (wheelHeight/2)+1], [wheelWidth/2+1, (wheelHeight/2)+wheelWidth+1], fill=backColor, color=backColor)
+
+
+
+    dpg.apply_transform("root node", dpg.create_translation_matrix([scWidth / 2, scHeight / 2]))
+
+
+    translations = [
+        [-70, -70],
+        [ 70, -70],
+        [-70,  70],
+        [ 70,  70]
+    ]
+
+    for i in range(0, 4):
+        dpg.apply_transform(("wheelNode" + str(i)), dpg.create_translation_matrix(translations[i]))
+
+    # dpg.apply_transform("planet node 1", dpg.create_rotation_matrix(math.pi*planet1_angle/180.0 , [0, 0, -1])*dpg.create_translation_matrix([planet1_distance, 0]))
+    # dpg.apply_transform("planet 1, moon node", dpg.create_rotation_matrix(math.pi*planet1_moonangle/180.0 , [0, 0, -1])*dpg.create_translation_matrix([planet1_moondistance, 0]))
+    # dpg.apply_transform("planet node 2", dpg.create_rotation_matrix(math.pi*planet2_angle/180.0 , [0, 0, -1])*dpg.create_translation_matrix([planet2_distance, 0]))
+    # dpg.apply_transform("planet 2, moon 1 node", dpg.create_rotation_matrix(math.pi*planet2_moon1distance/180.0 , [0, 0, -1])*dpg.create_translation_matrix([planet2_moon1distance, 0]))
+    # dpg.apply_transform("planet 2, moon 2 node", dpg.create_rotation_matrix(math.pi*planet2_moon2angle/180.0 , [0, 0, -1])*dpg.create_translation_matrix([planet2_moon2distance, 0]))
+
 
 def tick():
-    # dpg.set_value(fVal, 0.4)
-    pass
+    names = ["FL Pwr", "FR Pwr", "BL Pwr", "BR Pwr"]
+    for i in range(0, 4):
+        treadPositions[i] -= dpg.get_value(names[i]) * maxWheelSpeed
+        treadPositions[i] = treadPositions[i] % treadSpacing
+        dpg.apply_transform(("treadNode" + str(i)), dpg.create_translation_matrix([0, treadPositions[i]]))
+
+    width = dpg.get_item_width(driveWindowTag)
+    height = dpg.get_item_height(driveWindowTag)
+    dpg.apply_transform("root node", dpg.create_translation_matrix([width / 2, height / 2]))
+    dpg.set_item_width("driveDraw", width=width)
+    dpg.set_item_height("driveDraw", height=height)
+
+    dpg.apply_transform("backgroundNode", dpg.create_scale_matrix([width, height]))
