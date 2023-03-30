@@ -1,4 +1,5 @@
 import dearpygui.dearpygui as dpg
+import Tags
 import math
 
 
@@ -12,7 +13,7 @@ wheelColor = [255, 255, 255]
 scWidth = 500
 scHeight = 300
 treadSpacing = 25
-maxWheelSpeed = 3 # pixels per frame
+maxWheelSpeed = 10 # per frame
 
 treadPositions = [
     0, 0, 0, 0
@@ -50,6 +51,7 @@ def create():
                     for x in range(0, 4):
                         with dpg.draw_node(tag=("wheelNode" + str(x))):
                             dpg.draw_rectangle([-wheelWidth/2, wheelHeight/2], [wheelWidth/2, -wheelHeight/2], color=wheelColor)
+                            dpg.draw_text([0, 0], "0", tag="wheelVal" + str(x), size=13)
 
                             with dpg.draw_node(tag=("treadNode" + str(x))):
                                 for y in range(0, 5):
@@ -92,7 +94,7 @@ def create():
 
 
 def tick():
-    names = ["FL Pwr", "FR Pwr", "BL Pwr", "BR Pwr"]
+    names = [Tags.FLPWR, Tags.FRPWR, Tags.BLPWR, Tags.BRPWR]
     for i in range(0, 4):
         treadPositions[i] -= dpg.get_value(names[i]) * maxWheelSpeed
         treadPositions[i] = treadPositions[i] % treadSpacing

@@ -1,7 +1,7 @@
 
 import dearpygui.dearpygui as dpg
 import ui
-import widgets.drawTest
+import widgets.driveWidget
 import widgets.client
 
 
@@ -9,7 +9,7 @@ import widgets.client
 if __name__ == "__main__":
 
     w = [
-        widgets.drawTest.create,
+        widgets.driveWidget.create,
         widgets.client.create,
         ]
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
 
     def loop():
-        widgets.drawTest.tick()
+        widgets.driveWidget.tick()
         widgets.client.tick()
 
 
