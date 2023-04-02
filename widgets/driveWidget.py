@@ -13,6 +13,7 @@ wheelColor = [255, 255, 255]
 scWidth = 500
 scHeight = 300
 treadSpacing = 25
+lineThickness = 3
 maxWheelSpeed = 10 # per frame
 
 treadPositions = [
@@ -50,7 +51,7 @@ def create():
 
                     for x in range(0, 4):
                         with dpg.draw_node(tag=("wheelNode" + str(x))):
-                            dpg.draw_rectangle([-wheelWidth/2, wheelHeight/2], [wheelWidth/2, -wheelHeight/2], color=wheelColor)
+                            dpg.draw_rectangle([-wheelWidth/2, wheelHeight/2], [wheelWidth/2, -wheelHeight/2], color=wheelColor, thickness=lineThickness)
                             dpg.draw_text([0, 0], "0", tag="wheelVal" + str(x), size=13)
 
                             with dpg.draw_node(tag=("treadNode" + str(x))):
@@ -59,17 +60,17 @@ def create():
                                     flipped = [False, True, True, False][x]
                                     if not flipped:
                                         startY = (-wheelHeight/2) - wheelWidth # bc its a 45 deg angle, width == the dist up
-                                        dpg.draw_line([-wheelWidth/2, startY+y*treadSpacing], [wheelWidth/2, startY+y*treadSpacing+wheelWidth], color=wheelColor)
+                                        dpg.draw_line([-wheelWidth/2, startY+y*treadSpacing], [wheelWidth/2, startY+y*treadSpacing+wheelWidth], color=wheelColor, thickness=lineThickness)
                                     else:
                                         startY = (-wheelHeight/2)
-                                        dpg.draw_line([-wheelWidth/2, startY+y*treadSpacing], [wheelWidth/2, startY+y*treadSpacing-wheelWidth], color=wheelColor)
+                                        dpg.draw_line([-wheelWidth/2, startY+y*treadSpacing], [wheelWidth/2, startY+y*treadSpacing-wheelWidth], color=wheelColor, thickness=lineThickness)
 
 
                             with dpg.draw_node(tag=("maskNode" + str(x))):
                                 # upper mask
-                                dpg.draw_rectangle([-wheelWidth/2-1, (-wheelHeight/2)-2], [wheelWidth/2+1, (-wheelHeight/2)-wheelWidth-1], fill=backColor, color=backColor)
+                                dpg.draw_rectangle([-wheelWidth/2-3, (-wheelHeight/2)-2], [wheelWidth/2+3, (-wheelHeight/2)-wheelWidth-5], fill=backColor, color=backColor)
                                 # lower
-                                dpg.draw_rectangle([-wheelWidth/2-1, (wheelHeight/2)+1], [wheelWidth/2+1, (wheelHeight/2)+wheelWidth+1], fill=backColor, color=backColor)
+                                dpg.draw_rectangle([-wheelWidth/2-3, (wheelHeight/2)+1], [wheelWidth/2+3, (wheelHeight/2)+wheelWidth+5], fill=backColor, color=backColor)
 
 
 
